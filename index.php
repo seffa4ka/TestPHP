@@ -1,3 +1,8 @@
+<?php
+ini_set('display_errors','On');
+include('common/common_db.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +15,12 @@
   <main>
     <p>
       <?php
-        echo 'Hello, World!';
+      $mysqli = db_connect();
+      $res = $mysqli->query('SELECT * FROM `first`');
+      $res->data_seek(0);
+      while ($row = $res->fetch_assoc()) {
+        echo $row['text'];
+      }
       ?>
     </p>
   </main>
