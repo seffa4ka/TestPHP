@@ -1,13 +1,11 @@
 <?php
-require_once __DIR__ . '/models/First.php';
 ini_set('display_errors','On');
+require_once __DIR__ . '/common/autoload.php';
 
-$items = First::getAll();
-/*
-echo '<pre>'; 
-var_dump($items);
-echo '</pre>';
-*/
-include __DIR__ . '/views/index.php';
+$mainController = isset($_GET['mainController']) ? $_GET['mainController'] : 'First';
+$mainAction = isset($_GET['mainAction']) ? $_GET['mainAction'] : 'All';
 
-?>
+$controllerClassName = $mainController . 'Controller';
+$controller = new $controllerClassName;
+$method = 'action' . $mainAction;
+$controller->$method();

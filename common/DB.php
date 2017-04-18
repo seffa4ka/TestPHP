@@ -13,18 +13,22 @@ class DB {
     }
   }
 
-  public function query($sql, $class = 'stdClass') {
+  public function queryAll($sql, $class = 'stdClass') {
+    $resultArray = [];
     if ($result = $this->mysqli->query($sql)) {
-      $resultArray = [];
       while ($obj = $result->fetch_object($class)) {
         $resultArray[] = $obj;
       }
       $result->close();
     }
     $this->mysqli->close();
+    if (empty($resultArray)) {
+      $resultArray[] = null;
+    }
     return $resultArray;
   }
 
+  public function queryOne($sql, $class = 'stdClass') {
+    return $this->queryAll($sql, $class)['0'];
+  }
 }
-
-?>

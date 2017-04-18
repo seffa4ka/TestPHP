@@ -1,19 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../common/DB.php';
-
-class First {
+class First
+  extends MainModel {
 
   public $id;
   public $title;
   public $text;
   public $date;
 
-  public static function getAll() {
-    $db = new DB;
-    return $db->query('SELECT * FROM `first`', 'First');
-  }
+  protected static $table = 'first';
+  protected static $class = 'First';
 
 }
-
-?>
