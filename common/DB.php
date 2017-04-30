@@ -2,33 +2,37 @@
 
 class DB {
 
-  private $mysqli;
+  private $dbh;
+  private $className = 'stdClass';
+
 
   public function __construct() {
-    $config = parse_ini_file('config/conf.ini');
-    $this->mysqli = new mysqli($config['host'], $config['user'], $config['password'], $config['base']);
-    if (mysqli_connect_errno()) {
-    printf("Could not connect: %s\n", mysqli_connect_error());
-      exit();
+
+   function database_connect ($hostname, $database, $username, $password){
+        $dbh = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
+        return $dbh;
+    }
+
+    try {
+        $config = parse_ini_file('config/conf.ini');
+        $this->dbh = database_connect ($config['host'], $config['base'], $config['user'], $config['password']);
+    } catch(PDOException $e) {
+        echo $e->getMessage();
     }
   }
-
-  public function queryAll($sql, $class = 'stdClass') {
-    $resultArray = [];
-    if ($result = $this->mysqli->query($sql)) {
-      while ($obj = $result->fetch_object($class)) {
-        $resultArray[] = $obj;
-      }
-      $result->close();
-    }
-    $this->mysqli->close();
-    if (empty($resultArray)) {
-      $resultArray[] = null;
-    }
-    return $resultArray;
+  
+  public function setClassName($className) {
+    $this->className = $className;
   }
 
-  public function queryOne($sql, $class = 'stdClass') {
-    return $this->queryAll($sql, $class)['0'];
+  public function query($sql, $params = []) {
+    $sth = $this->dbh->prepare($sql);
+    $sth->execute($params);
+    return $sth->fetchAll(PDO::FETCH_CLASS, $this->className);
+  }
+  
+  public function execute($sql, $params = []) {
+    $sth = $this->dbh->prepare($sql);
+    return $sth->execute($params);
   }
 }

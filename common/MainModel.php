@@ -1,20 +1,46 @@
 <?php
 
-abstract class MainModel 
-  implements IModel {
+abstract class MainModel {
 
-  protected static $table;
-  protected static $class;
+  static protected $table;
+  
+  protected $data = [];
 
-  public static function getAll() {
-    $db = new DB;
-    $sql = 'SELECT * FROM ' . static::$table;
-    return $db->queryAll($sql, static::$class);
+  public function __set($name, $value) {
+    $this->data[$name] = $value;
+  }
+  
+  public function __get($name) {
+    return $this->data[$name];
   }
 
-  public static function getOne($id) {
-    $db = new DB;
-    $sql = 'SELECT * FROM ' . static::$table . ' WHERE `id`=' . $id;
-    return $db->queryOne($sql, static::$class);
+  public static function findAll() {
+    $className = get_called_class();
+    $sql = 'SELECT * FROM ' . static::$table;
+    $db = new DB();
+    $db->setClassName($className);
+    return $db->query($sql);
+  }
+  
+  public static function findOne($id) {
+    $className = get_called_class();
+    $sql = 'SELECT * FROM ' . static::$table . ' WHERE id=:id';
+    $db = new DB();
+    $db->setClassName($className);
+    return $db->query($sql, [':id' => $id])[0];
+  }
+  
+  public function insert() {
+    $cols = array_keys($this->data);
+    $data = [];
+    foreach ($cols as $col) {
+      $data[':' . $col] = $this->data[$col];
+    }
+    $sql = 'INSERT INTO ' . static::$table . ' '
+            . '(' . implode(', ', $cols) . ')'
+            . ' VALUES '
+            . '(' . implode(', ', array_keys($data)) . ')';
+    $db = new DB();
+    $db->execute($sql, $data);
   }
 }
