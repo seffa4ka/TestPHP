@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Common;
+
+use App\Common\DB;
+
 abstract class MainModel {
 
   static protected $table;
@@ -78,7 +82,7 @@ abstract class MainModel {
     $db = new DB();
     $db->execute($sql, $data);
   }
-  
+
   public function save() {
     if (!isset($this->id)) {
       $this->insert();

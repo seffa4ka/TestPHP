@@ -1,14 +1,17 @@
 <?php
 
+namespace App\Models;
+
+use App\Common\MainModel;
 /**
- * Class FirstModel
+ * Class First
  *
  * @property $id
  * @property $title
  * @property $text
  * @property $date
  */
-class FirstModel
+class First
   extends MainModel {
 
   static protected $table = 'first';

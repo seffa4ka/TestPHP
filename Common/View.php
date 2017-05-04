@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Common;
+
 class View {
 
   protected $data = [];
@@ -18,7 +20,7 @@ class View {
     }
 
     ob_start();
-    include __DIR__ . '/../views/' . $template;
+    include __DIR__ . '/../Views/' . $template;
     $contents = ob_get_contents();
     ob_end_clean();
 
