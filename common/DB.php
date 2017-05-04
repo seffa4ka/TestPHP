@@ -7,20 +7,18 @@ class DB {
 
 
   public function __construct() {
-
-   function database_connect ($hostname, $database, $username, $password){
-        $dbh = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
-        return $dbh;
-    }
-
     try {
         $config = parse_ini_file('config/conf.ini');
-        $this->dbh = database_connect ($config['host'], $config['base'], $config['user'], $config['password']);
+        $this->dbh = new PDO(
+                'mysql:host=' . $config['host'] . ';dbname=' . $config['base'],
+                $config['user'],
+                $config['password']
+              );
     } catch(PDOException $e) {
         echo $e->getMessage();
     }
   }
-  
+
   public function setClassName($className) {
     $this->className = $className;
   }
@@ -30,9 +28,13 @@ class DB {
     $sth->execute($params);
     return $sth->fetchAll(PDO::FETCH_CLASS, $this->className);
   }
-  
+
   public function execute($sql, $params = []) {
     $sth = $this->dbh->prepare($sql);
     return $sth->execute($params);
+  }
+
+  public function lastInsertId() {
+    return $this->dbh->lastInsertId();
   }
 }
